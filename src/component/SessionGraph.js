@@ -1,252 +1,214 @@
-import React, {Component} from "react";
 import DateService from "../phoneApp/service/date";
 
 import './SessionGraph.css';
+import {useEffect, useRef} from 'react';
 
-export default class SessionGraph extends Component {
-    static Offset = {x:20, y:0};
-    static AxisLabel = {x:25, offset:12};
-    static TimeLabel = {x:60, y:30, offset:20};
-    static OunceLabel = {x:0, y:20, offset:12};
-    static LabelMargin = 10;
-    static RuleColor = 'rgba(255, 255, 255, 0.5)';
-    static HistoryLineColor = 'white';
-    static HistoryNodeColor = 'yellow';
+const Offset = {x: 20, y: 0};
+const AxisLabel = {x: 25, offset: 12};
+const TimeLabel = {x: 60, y: 30, offset: 20};
+const OunceLabel = {x: 0, y: 20, offset: 12};
+const LabelMargin = 10;
+const RuleColor = 'rgba(255, 255, 255, 0.5)';
+const HistoryLineColor = 'white';
+const HistoryNodeColor = 'yellow';
 
-    constructor(props) {
-        super(props);
+function getRange(startDate, endDate) {
+  let start = new Date(startDate);
+  start.setMinutes(0);
+  start.setSeconds(0);
 
-        this.startDate = new Date(props.history[0].date);
-        this.endDate = new Date(props.history[props.history.length - 1].date);
-        this.range = this.getRange();
+  let range = 0;
 
-        this.width = window.innerWidth;
-        this.height = this.range * SessionGraph.TimeLabel.y +
-            SessionGraph.OunceLabel.y +
-            SessionGraph.Offset.y * 2 +
-            SessionGraph.AxisLabel.x;
+  while (start < endDate) {
+    start.setHours(start.getHours() + 1);
+    range++;
+  }
 
-        this.maxOunces = Math.ceil(props.history[props.history.length - 1].alcohol);
-        this.ounceWidth = (this.width - SessionGraph.TimeLabel.x - SessionGraph.Offset.x * 2) / this.maxOunces;
-
-        this.axisRect = {
-            l: 0,
-            t: SessionGraph.Offset.y,
-            w: this.width,
-            h: SessionGraph.AxisLabel.x
-        };
-
-        this.ouncesRect = {
-            l: SessionGraph.TimeLabel.x + SessionGraph.Offset.x,
-            t: SessionGraph.AxisLabel.x + SessionGraph.Offset.y,
-            w: this.width - (SessionGraph.TimeLabel.x + SessionGraph.Offset.x * 2),
-            h: SessionGraph.OunceLabel.y
-        };
-
-        this.hoursRect = {
-            l: SessionGraph.Offset.x,
-            t: SessionGraph.OunceLabel.y + SessionGraph.AxisLabel.x + SessionGraph.Offset.y,
-            w: SessionGraph.TimeLabel.x,
-            h: this.range * SessionGraph.TimeLabel.y
-        };
-
-        this.nodePath = new Path2D();
-        this.nodePath.arc(0, 0, 5, 0, Math.PI * 2);
-        this.nodePath.closePath();
-
-        this.ref = React.createRef();
-    }
-
-    componentDidMount() {
-        this.cnv = this.ref.current;
-        this.ctx = this.cnv.getContext('2d');
-        this.ctx.font = '16px Helvetica';
-
-        this.draw();
-    }
-
-    getRange() {
-        let start = new Date(this.startDate);
-        start.setMinutes(0);
-        start.setSeconds(0);
-
-        let range = 0;
-
-        while (start < this.endDate) {
-            start.setHours(start.getHours() + 1);
-            range ++;
-        }
-
-        return range + 1;
-    }
-
-    clear() {
-        // this.ctx.fillStyle = 'purple';
-        // this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.clearRect(0, 0, this.width, this.height);
-    }
-
-    draw() {
-        this.clear();
-        this.drawAxis();
-        this.drawOunces();
-        this.drawHours();
-        this.drawRules();
-        this.drawHistory();
-    }
-
-    drawAxis() {
-        // this.ctx.strokeStyle = 'white';
-        // this.ctx.strokeRect(this.axisRect.l, this.axisRect.t, this.axisRect.w, this.axisRect.h);
-
-        const label = 'Alcohol (fl oz)';
-        const metrics = this.ctx.measureText(label);
-        const x = (this.axisRect.w - metrics.width) * 0.5;
-        const y = this.axisRect.t + SessionGraph.AxisLabel.offset;
-
-        this.ctx.fillStyle = 'white';
-        this.ctx.fillText(label, x, y);
-    }
-
-    drawOunces() {
-        let x, metrics;
-
-        // this.ctx.strokeStyle = 'white';
-        // this.ctx.strokeRect(this.ouncesRect.l, this.ouncesRect.t, this.ouncesRect.w, this.ouncesRect.h);
-
-        this.ctx.fillStyle = 'white';
-
-        for (let i = 0; i < this.maxOunces + 1; i ++) {
-            x = this.ouncesRect.l + i * this.ounceWidth;
-            metrics = this.ctx.measureText(i.toString());
-
-            // if (i < this.maxOunces) {
-            //     this.ctx.strokeStyle = 'white';
-            //     this.ctx.strokeRect(
-            //         x,
-            //         this.ouncesRect.t,
-            //         this.ounceWidth,
-            //         this.ouncesRect.h
-            //     );
-            // }
-
-            this.ctx.fillText(
-                i.toString(),
-                x - metrics.width * 0.5,
-                this.ouncesRect.t + SessionGraph.OunceLabel.offset
-            );
-        }
-    }
-
-    drawHours() {
-        let date, label, metrics;
-
-        // this.ctx.strokeStyle = 'white';
-        // this.ctx.strokeRect(this.hoursRect.l, this.hoursRect.t, this.hoursRect.w, this.hoursRect.h);
-
-        this.ctx.fillStyle = 'white';
-
-        date = new Date(this.startDate);
-
-        for (let i = 0; i < this.range; i ++) {
-            label = DateService.format(date, '%g:00%a').slice(0, -1);
-            metrics = this.ctx.measureText(label);
-
-            // this.ctx.strokeStyle = 'white';
-            // this.ctx.strokeRect(
-            //     this.hoursRect.l,
-            //     this.hoursRect.t + i * SessionGraph.TimeLabel.y,
-            //     this.hoursRect.w,
-            //     SessionGraph.TimeLabel.y
-            // );
-
-            this.ctx.fillText(
-                label,
-                this.hoursRect.l + SessionGraph.TimeLabel.x - metrics.width - SessionGraph.LabelMargin,
-                this.hoursRect.t + i * SessionGraph.TimeLabel.y + SessionGraph.TimeLabel.offset
-            );
-
-            date = new Date(date.getTime() + 60 * 60 * 1000);
-        }
-    }
-
-    drawRules() {
-        let i, x, y;
-
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 1;
-
-        for (i = 0; i < this.range; i ++) {
-            y = (i + 0.5) * SessionGraph.TimeLabel.y + SessionGraph.Offset.y + SessionGraph.OunceLabel.y + SessionGraph.AxisLabel.x;
-
-            this.ctx.moveTo(SessionGraph.TimeLabel.x + SessionGraph.Offset.x, y);
-            this.ctx.lineTo(this.width - SessionGraph.Offset.x, y);
-        }
-
-        for (i = 0; i < this.maxOunces + 1; i ++) {
-            x = i * this.ounceWidth + SessionGraph.TimeLabel.x + SessionGraph.Offset.x;
-            y = SessionGraph.Offset.y + SessionGraph.OunceLabel.y + SessionGraph.AxisLabel.x;
-
-            this.ctx.moveTo(x, y);
-            this.ctx.lineTo(x, this.height - SessionGraph.Offset.y);
-        }
-
-        this.ctx.strokeStyle = SessionGraph.RuleColor;
-        this.ctx.stroke();
-    }
-
-    drawHistory() {
-        const {history} = this.props;
-        let x, y, i, date, delta, minutes;
-
-        minutes = this.startDate.getMinutes() / 60;
-
-        y = (0.5 + minutes) * SessionGraph.TimeLabel.y + SessionGraph.OunceLabel.y + SessionGraph.Offset.y + SessionGraph.AxisLabel.x;
-        x = SessionGraph.TimeLabel.x + SessionGraph.Offset.x;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-
-        for (i = 0; i < history.length; i ++) {
-            date = new Date(history[i].date);
-            delta = (date - this.startDate) / 60 / 60 / 1000;
-
-            y = (delta + minutes + 0.5) * SessionGraph.TimeLabel.y + SessionGraph.OunceLabel.y + SessionGraph.Offset.y + SessionGraph.AxisLabel.x;
-            x = history[i].alcohol * this.ounceWidth + SessionGraph.TimeLabel.x + SessionGraph.Offset.x;
-
-            this.ctx.lineTo(x, y);
-        }
-
-        this.ctx.lineWidth = 2;
-        this.ctx.strokeStyle = SessionGraph.HistoryLineColor;
-        this.ctx.stroke();
-
-        this.ctx.fillStyle = SessionGraph.HistoryNodeColor;
-
-        for (i = 0; i < history.length; i ++) {
-            date = new Date(history[i].date);
-            delta = (date - this.startDate) / 60 / 60 / 1000;
-
-            y = (delta + minutes + 0.5) * SessionGraph.TimeLabel.y + SessionGraph.OunceLabel.y + SessionGraph.Offset.y + SessionGraph.AxisLabel.x;
-            x = history[i].alcohol * this.ounceWidth + SessionGraph.TimeLabel.x + SessionGraph.Offset.x;
-
-            this.ctx.save();
-            this.ctx.translate(x, y);
-            this.ctx.fill(this.nodePath);
-            this.ctx.restore();
-        }
-    }
-    
-    render() {
-        const {session} = this.props;
-        const title = DateService.format(new Date(session.start), '%l, %F %j, %Y - %g:%i %a');
-
-        return <div className="SessionGraph">
-            <div className="SessionGraphTitle">{title}</div>
-            <canvas ref={this.ref}
-                    width={this.width}
-                    height={this.height}
-            />
-        </div>;
-    }
+  return range + 1;
 }
+
+export default function SessionGraph({session, history}) {
+  const canvasRef = useRef(null);
+  const title = DateService.format(new Date(session.start), '%l, %F %j, %Y - %g:%i %a');
+
+  const startDate = new Date(history[0].date);
+  const endDate = new Date(history[history.length - 1].date);
+  const range = getRange(startDate, endDate);
+  const width = window.innerWidth;
+  const height = range * TimeLabel.y +
+    OunceLabel.y +
+    Offset.y * 2 +
+    AxisLabel.x;
+
+  const maxOunces = Math.ceil(history[history.length - 1].alcohol);
+  const ounceWidth = (width - TimeLabel.x - Offset.x * 2) / maxOunces;
+
+  const axisRect = {
+    l: 0,
+    t: Offset.y,
+    w: width,
+    h: AxisLabel.x
+  };
+
+  const ouncesRect = {
+    l: TimeLabel.x + Offset.x,
+    t: AxisLabel.x + Offset.y,
+    w: width - (TimeLabel.x + Offset.x * 2),
+    h: OunceLabel.y
+  };
+
+  const hoursRect = {
+    l: Offset.x,
+    t: OunceLabel.y + AxisLabel.x + Offset.y,
+    w: TimeLabel.x,
+    h: range * TimeLabel.y
+  };
+
+  const nodePath = new Path2D();
+  nodePath.arc(0, 0, 5, 0, Math.PI * 2);
+  nodePath.closePath();
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const context = canvas.getContext('2d')
+    draw(context);
+  })
+
+  function drawAxis(ctx) {
+    const label = 'Alcohol (fl oz)';
+    const metrics = ctx.measureText(label);
+    const x = (axisRect.w - metrics.width) * 0.5;
+    const y = axisRect.t + AxisLabel.offset;
+
+    ctx.fillStyle = 'white';
+    ctx.fillText(label, x, y);
+  }
+
+  function drawOunces(ctx) {
+    let x, metrics;
+
+    ctx.fillStyle = 'white';
+
+    for (let i = 0; i < maxOunces + 1; i ++) {
+      x = ouncesRect.l + i * ounceWidth;
+      metrics = ctx.measureText(i.toString());
+
+      ctx.fillText(
+        i.toString(),
+        x - metrics.width * 0.5,
+        ouncesRect.t + OunceLabel.offset
+      );
+    }
+  }
+
+  function drawHours(ctx) {
+    let date, label, metrics;
+
+    ctx.fillStyle = 'white';
+
+    date = new Date(startDate);
+
+    for (let i = 0; i < range; i ++) {
+      label = DateService.format(date, '%g:00%a').slice(0, -1);
+      metrics = ctx.measureText(label);
+
+      ctx.fillText(
+        label,
+        hoursRect.l + TimeLabel.x - metrics.width - LabelMargin,
+        hoursRect.t + i * TimeLabel.y + TimeLabel.offset
+      );
+
+      date = new Date(date.getTime() + 60 * 60 * 1000);
+    }
+  }
+
+  function drawRules(ctx) {
+    let i, x, y;
+
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+
+    for (i = 0; i < range; i ++) {
+      y = (i + 0.5) * TimeLabel.y + Offset.y + OunceLabel.y + AxisLabel.x;
+
+      ctx.moveTo(TimeLabel.x + Offset.x, y);
+      ctx.lineTo(width - Offset.x, y);
+    }
+
+    for (i = 0; i < maxOunces + 1; i ++) {
+      x = i * ounceWidth + TimeLabel.x + Offset.x;
+      y = Offset.y + OunceLabel.y + AxisLabel.x;
+
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, height - Offset.y);
+    }
+
+    ctx.strokeStyle = RuleColor;
+    ctx.stroke();
+  }
+
+  function drawHistory(ctx) {
+    let x, y, i, minutes;
+
+    minutes = startDate.getMinutes() / 60;
+
+    y = (0.5 + minutes) * TimeLabel.y + OunceLabel.y + Offset.y + AxisLabel.x;
+    x = TimeLabel.x + Offset.x;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    for (i = 0; i < history.length; i ++) {
+      let {x, y} = getXYFromData(history[i], minutes);
+      ctx.lineTo(x, y);
+    }
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = HistoryLineColor;
+    ctx.stroke();
+
+    ctx.fillStyle = HistoryNodeColor;
+
+    for (i = 0; i < history.length; i ++) {
+      let {x, y} = getXYFromData(history[i], minutes);
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fill(nodePath);
+      ctx.restore();
+    }
+
+  }
+
+  function getXYFromData(historyPoint, minutes) {
+    const date = new Date(historyPoint.date);
+    const delta = (date - startDate) / 60 / 60 / 1000;
+
+    const y = (delta + minutes + 0.5) * TimeLabel.y + OunceLabel.y + Offset.y + AxisLabel.x;
+    const x = historyPoint.alcohol * ounceWidth + TimeLabel.x + Offset.x;
+    return {x, y};
+  }
+
+  function clear(ctx) {
+    ctx.clearRect(0, 0, width, height)
+  }
+
+  function draw(ctx) {
+    clear(ctx);
+    drawAxis(ctx);
+    drawOunces(ctx);
+    drawHours(ctx);
+    drawRules(ctx);
+    drawHistory(ctx);
+  }
+
+  return (
+    <div className="SessionGraph">
+      <div className="SessionGraphTitle">{title}</div>
+      <canvas ref={canvasRef}
+              width={width}
+              height={height}
+      />
+    </div>
+  );
+};
