@@ -1,0 +1,77 @@
+.PhoneApp {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.PhoneAppBody {
+    flex: 1 1 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.PhoneAppLayout {
+    position: relative;
+    height: 100%;
+}
+
+.PhoneAppLayoutCenter {
+    top: -100%;
+}
+
+.PhoneAppLayoutRight {
+    top: -200%;
+}
+
+.PhoneAppPanel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.PhoneAppPanelBody {
+    flex: 1 1 0;
+}
+
+.PhoneAppMask {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.PhoneAppCtrlRow {
+    display: flex;
+    align-items: center;
+}
+
+.PhoneAppCtrlRowLeft {
+    text-align: left;
+    flex: 1 1 0;
+}
+
+.PhoneAppCtrlRowCenter {
+    text-align: center;
+    flex: 1 1 0;
+}
+
+.PhoneAppCtrlRowRight {
+    text-align: right;
+    flex: 1 1 0;
+}
+
+.PhoneAppButton {
+    display: inline-block;
+    vertical-align: middle;
+    user-select: none;
+    cursor: pointer;
+}
+
+.PhoneAppIconButton {
+    width: 30px;
+    height: 30px;
+}

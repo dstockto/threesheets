@@ -1,0 +1,11 @@
+.PanelAddDrink {
+    text-align: center;
+}
+
+.PanelAddDrinkCtrl {
+    margin-bottom: 15px;
+}
+
+.PanelAddDrinkCtrl:last-child {
+    margin-bottom: 0;
+}

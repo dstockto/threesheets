@@ -1,0 +1,118 @@
+html {
+    background-color: black;
+    color: white;
+    font-size: 24px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.PhoneAppTitle {
+    padding: 0 10px;
+}
+
+.PhoneAppBody {
+    background: transparent url('img/bg.png') repeat 0 0;
+}
+
+.PhoneAppLayout {
+    transition: left 0.25s ease;
+}
+
+.PhoneAppPanelNavBar {
+    padding: 0 5px;
+    height: 52px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.PhoneAppPanelBody {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.PhoneAppPanelFooter {
+    padding-bottom: 10px;
+}
+
+.PhoneAppFooter {
+    padding: 10px;
+}
+
+.PhoneAppMask {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.PhoneAppMaskPane {
+    border-radius: 5px;
+    border: 1px solid #7f7f7f;
+    max-width: 275px;
+    overflow: hidden;
+    background: transparent url('img/bg.png') repeat 0 0;
+}
+
+.PhoneAppMaskPaneTitle {
+    padding: 5px 10px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.PhoneAppMaskPaneBody {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.PhoneAppMaskPaneFooter {
+    padding: 5px;
+}
+
+.PhoneAppTextButton {
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: royalblue;
+    color: white;
+    padding: 10px 20px;
+}
+
+.PhoneAppTextButton.Disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+.PhoneAppTextButton.Disabled:hover,
+.PhoneAppTextButton.Disabled:active {
+    background-color: royalblue;
+}
+
+.PhoneAppTextButton:hover {
+    background-color: #6384e5;
+}
+
+.PhoneAppTextButton:active {
+    background-color: #294cb4;
+}
+
+.PhoneAppIconButton {
+    background: transparent url('img/icon30.png') no-repeat 0 0;
+}
+
+.PhoneAppIconButton:hover {
+    background-position-x: -30px;
+}
+
+.PhoneAppIconButton:active {
+    background-position-x: -60px;
+}
+
+.PhoneAppIconButton.IconHamburger {
+    background-position-y: 0;
+}
+
+.PhoneAppIconButton.IconBack {
+    background-position-y: -30px;
+}
+
+.PhoneAppIconButton.IconForward {
+    background-position-y: -60px;
+}

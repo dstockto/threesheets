@@ -1,0 +1,6 @@
+.PanelHistory {
+    display: block;
+    align-items: normal;
+    justify-content: normal;
+    overflow: auto;
+}

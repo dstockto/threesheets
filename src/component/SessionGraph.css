@@ -1,0 +1,21 @@
+canvas {
+    display: block;
+    margin: 0;
+}
+
+.SessionGraph {
+    padding: 10px 0;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.SessionGraph:last-child {
+    margin-bottom: 0;
+}
+
+.SessionGraphTitle {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 7px;
+}
