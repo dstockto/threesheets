@@ -1,12 +1,11 @@
-import React from "react";
-import Panel from "../../phoneApp/component/Panel";
+import React, {Component} from "react";
 import PanelDashboard from "./Dashboard";
 import SessionGraph from "../SessionGraph";
 import Storage from "../../phoneApp/service/storage";
 
 import './History.css';
 
-export default class PanelHistory extends Panel {
+export default class PanelHistory extends Component {
     static getPropsFromState(baseProps, state) {
         return {
             goToComponent: baseProps.goToComponent,

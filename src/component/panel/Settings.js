@@ -1,7 +1,7 @@
-import Panel from "../../phoneApp/component/Panel";
 import MaskConfirm from "../../phoneApp/component/mask/MaskConfirm";
+import {Component} from 'react';
 
-export default class PanelSettings extends Panel {
+export default class PanelSettings extends Component {
     static getPropsFromState(baseProps, state) {
         return {
             clearHistory: baseProps.clearHistory,

@@ -1,9 +1,9 @@
-import Panel from "../../phoneApp/component/Panel";
 import PanelDashboard from "./Dashboard";
 
 import './AddDrink.css';
+import {Component} from 'react';
 
-export default class PanelAddDrink extends Panel {
+export default class PanelAddDrink extends Component {
     static getPropsFromState(baseProps, state) {
         return {
             goToComponent: baseProps.goToComponent,
