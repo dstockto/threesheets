@@ -1,5 +1,5 @@
 import Panel from "../../phoneApp/component/Panel";
-import MaskConfirm from "../../phoneApp/component/mask/Confirm";
+import MaskConfirm from "../../phoneApp/component/mask/MaskConfirm";
 
 export default class PanelSettings extends Panel {
     static getPropsFromState(baseProps, state) {
@@ -26,7 +26,7 @@ export default class PanelSettings extends Panel {
                          // onClick={canClearHistory ? () => clearHistory() : null}
                          onClick={canClearHistory
                              ? () => setMask(
-                                 <MaskConfirm title="Clear History"
+                                 <MaskConfirm title="Clear History!"
                                               message="Are you sure you want to delete all history?"
                                               accept="Delete"
                                               acceptFn={() => clearHistory()}
